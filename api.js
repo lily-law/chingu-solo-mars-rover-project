@@ -1,21 +1,29 @@
 const https = require('https');
+const dotenv = require('dotenv');
+dotenv.config();
 
-function getPhotoList({rover, sol, camera, page}) {
-    https.get(`https://api.nasa.gov/mars-photos/api/v1/rovers/${rover}/photos?sol=${sol}${camera !== all ? '&camera='+camera : ''}&page=${page}&api_key=${process.env.NASA_API_KEY}`, (res) => {
-    let data = '';
-    res.on('data', (chunk) => {
-        data += chunk;
-    });
-    resp.on('end', () => {
-        const photos = JSON.parse(data).photos;
-        return {
-            photos: JSON.parse(data),
-            next: photos.length < 25 ? 'end' : `/api/${rover}/photos?sol=${sol}&camera=${camera}&page=${parseInt(page)+1}`
-        } 
-    });
-
-    }).on("error", (err) => {
-        return err
+async function getPhotoList({rover, sol, camera, page}) {
+    return new Promise((resolve, reject) => {
+        https.get(`https://api.nasa.gov/mars-photos/api/v1/rovers/${rover}/photos?sol=${sol}${camera !== 'any' ? '&camera='+camera : ''}&page=${page}&api_key=${process.env.NASA_API_KEY}`, (res) => {
+            let data = '';
+            res.on('data', (chunk) => {
+                data += chunk;
+            });
+            res.on('end', async () => {
+                const json = await JSON.parse(data);
+                if (json.photos) {
+                    resolve({
+                        photos: json.photos,
+                        next: json.photos.length < 25 ? 'end' : `/api/${rover}?sol=${sol}&camera=${camera}&page=${parseInt(page)+1}`
+                    });
+                } 
+                else {
+                    reject(json); 
+                }
+            });
+        }).on("error", (err) => {
+            reject(err)
+        });
     });
 }
 
@@ -26,10 +34,10 @@ const roversCameras = {
 };
 function validateRoverRequest(reqData) {
     const errors = [];
-    if (!Object.keys(roversCameras).find(rover => rover.name === reqData.rover)) {
+    if (!Object.keys(roversCameras).find(rover => rover === reqData.rover)) {
         errors.push('No such rover: '+reqData.rover);
     }
-    else if (roversCameras[reqData.rover]) {
+    else if (reqData.camera !== 'any' && !roversCameras[reqData.rover].find(cam => cam === reqData.camera)) {
         errors.push(`${reqData.rover} rover does not have ${reqData.camera} camera`);
     }
     if (reqData.sol === '' || isNaN(reqData.sol)) {
@@ -41,7 +49,7 @@ function validateRoverRequest(reqData) {
     if (errors.length > 0) {
         return { errors }
     }
-    return
+    return {}
 }
 
 module.exports = {getPhotoList, validateRoverRequest}
