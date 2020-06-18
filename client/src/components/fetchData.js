@@ -1,21 +1,19 @@
-export default async function fetchData(url, setStatus) {
-    let res;
-    try {
-        res = await fetch(url);
+export default async function fetchData(url, setStatus, successMsg) {
+        let res = await fetch(url);
         let json = await res.json();
-        if (res.ok && json.data) { 
-            setStatus({code: res.status});
-            return json.data
-        } 
-        else {
-            throw json.error
+        try {
+            if (res.ok && json) { 
+                successMsg && setStatus({done: successMsg});
+                return json
+            } 
+            else {
+                throw json
+            }
         }
-    }
-    catch (e) {
-        console.error(e);
-        setStatus({
-            code: res.status,
-            message: e.message
-        });
-    }
+        catch (e) {
+            setStatus({
+                ...e
+            });
+        }
+    return
 }
