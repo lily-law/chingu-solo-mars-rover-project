@@ -1,13 +1,18 @@
 import React, {useEffect, useRef} from 'react';
 import fetchData from './fetchData';
 
-function NextPage({url, addToPhotoData, setStatus}) {
+function NextPage({next, addToPhotoData, setStatus, pagesTotal}) {
     const ref = useRef(null);
     useEffect(() => {
         const fetchNextPage = async () => {
-            let data = await fetchData(url, setStatus);
-            if (data && data.photos) { 
-                addToPhotoData(data);
+            try {
+                let data = await fetchData(next.url, setStatus, `Photo data recieved (${next.index}/${pagesTotal})`);
+                if (data && data.photos) { 
+                    addToPhotoData(data);
+                }
+            }
+            catch (e) {
+                console.error(e);
             }
         };
         if (ref.current) {
@@ -23,7 +28,7 @@ function NextPage({url, addToPhotoData, setStatus}) {
                 refCurrent && observer.unobserve(refCurrent);
             } 
         }
-    }, [ref, url, addToPhotoData, setStatus]);
+    }, [ref, next, addToPhotoData, setStatus]);
     return <div ref={ref}></div>
 }
 

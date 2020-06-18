@@ -11,7 +11,10 @@ async function getPhotoList({rover, sol, camera, page}) {
         if (response.data.photos) {
             return {
                 photos: response.data.photos,
-                next: response.data.photos.length < 25 ? 'end' : `/api/${rover}?sol=${sol}&camera=${camera}&page=${parseInt(page)+1}`
+                next: {
+                    url: response.data.photos.length < 25 ? 'end' : `/api/photos/${rover}?sol=${sol}&camera=${camera}&page=${parseInt(page)+1}`,
+                    index: parseInt(page)+1
+                } 
             }
         }
     }
