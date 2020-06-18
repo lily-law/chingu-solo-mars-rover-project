@@ -1,13 +1,41 @@
-import React, { useState } from 'react';
-import Search from './components/Search';
+import React, { useState, useEffect } from 'react';
 import Gallery from './components/Gallery';
+import SideBar from './components/SideBar';
 import fetchData from './components/fetchData';
 import './App.css';
+
+const cameras = {
+  "FHAZ": "Front Hazard Avoidance Camera",
+  "NAVCAM": "Navigation Camera",
+  "MAST": "Mast Camera",
+  "CHEMCAM": "Chemistry and Camera Complex",
+  "MAHLI": "Mars Hand Lens Imager",
+  "MARDI": "Mars Descent Imager",
+  "RHAZ": "Rear Hazard Avoidance Camera",
+  "PANCAM": "Panoramic Camera",
+  "MINITES": "Miniature Thermal Emission Spectrometer"
+}
+const rovers = [
+  {
+    name: 'Curiosity', 
+    cameras: ["FHAZ", "NAVCAM", "MAST", "CHEMCAM", "MAHLI", "MARDI", "RHAZ"]
+  },
+  { 
+    name: 'Opportunity',
+    cameras: ["FHAZ", "RHAZ", "NAVCAM", "PANCAM", "MINITES"]
+  },
+  {
+    name: 'Spirit',
+    cameras: ["FHAZ", "RHAZ", "NAVCAM", "PANCAM", "MINITES"]
+  }
+];
 
 function App() {
   const [photoData, setPhotoData] = useState({photos: []});
   const [status, setStatus] = useState();
   const [manifests, setManifests] = useState({});
+  const [rover, setRover] = useState('Curiosity');
+  const [pagesTotal, setPagesTotal] = useState(0);
 
   useEffect(() => {
     const getManifest = async (rover) => {
@@ -31,12 +59,10 @@ function App() {
       setManifests(manis);
     })();
   }, []);
-  
   return (
     <div className="App">
-      <Search {...{setPhotoData, setStatus}} />
-      {photoData.photos.length > 0 && <Gallery {...{photoData, setPhotoData, setStatus}} />}
-      <Status {...{status, photoData}} />
+      <SideBar {...{setPhotoData, setStatus, status, photoData, manifests, rovers, cameras, rover, setRover, setPagesTotal}} />
+      {photoData.photos.length > 0 && <Gallery {...{photoData, setPhotoData, setStatus, pagesTotal}} />}
     </div>
   );
 }
