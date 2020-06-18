@@ -4,13 +4,15 @@ dotenv.config();
 
 async function getPhotoList({rover, sol, camera, page}) {
     const response = await axios.get(`https://api.nasa.gov/mars-photos/api/v1/rovers/${rover}/photos?sol=${sol}${camera !== 'any' ? '&camera='+camera : ''}&page=${page}&api_key=${process.env.NASA_API_KEY}`);
-    if (response.data.errors) {
-        throw response.data.errors
-    }
-    if (response.data.photos) {
-        return {
-            photos: response.data.photos,
-            next: response.data.photos.length < 25 ? 'end' : `/api/${rover}?sol=${sol}&camera=${camera}&page=${parseInt(page)+1}`
+    if (response.data) {
+        if (response.data.errors) {
+            throw response.data.errors
+        }
+        if (response.data.photos) {
+            return {
+                photos: response.data.photos,
+                next: response.data.photos.length < 25 ? 'end' : `/api/${rover}?sol=${sol}&camera=${camera}&page=${parseInt(page)+1}`
+            }
         }
     }
     else {
@@ -23,7 +25,7 @@ const roversCameras = {
     'Opportunity': ["FHAZ", "RHAZ", "NAVCAM", "PANCAM", "MINITES"],
     'Spirit' : ["FHAZ", "RHAZ", "NAVCAM", "PANCAM", "MINITES"]
 };
-function validateRoverRequest(reqData) {
+function validatePhotosRequest(reqData) {
     const errors = [];
     if (!Object.keys(roversCameras).find(rover => rover === reqData.rover)) {
         errors.push('No such rover: '+reqData.rover);
@@ -43,4 +45,35 @@ function validateRoverRequest(reqData) {
     return {}
 }
 
-module.exports = {getPhotoList, validateRoverRequest}
+const manifests = {};
+
+async function getManifest({rover}) {
+    if (manifests.hasOwnProperty(rover) && Date.now() - manifests[rover].timeFetched < 1000*60*60*24) {
+        return {
+            manifest: manifests[rover].data
+        }
+    }
+    const response = await axios.get(`https://api.nasa.gov/mars-photos/api/v1/manifests/${rover}/?api_key=${process.env.NASA_API_KEY}`);
+    if (response.data) {
+        if (response.data.errors) {
+            throw response.data.errors
+        }
+        if (response.data['photo_manifest']) {
+            manifests[rover] = {
+                timeFetched: Date.now(),
+                data: response.data['photo_manifest']
+            };
+            return {
+                manifest: manifests[rover].data
+            }
+        }
+    }
+    else {
+        return response
+    } 
+}
+function validateManifestRequest({rover}) {
+    return Object.keys(roversCameras).find(r => r.toLowerCase() === rover.toLowerCase())
+}
+
+module.exports = {getPhotoList, validatePhotosRequest, getManifest, validateManifestRequest}
