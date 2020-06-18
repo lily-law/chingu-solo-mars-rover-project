@@ -1,0 +1,26 @@
+.search {
+    max-width: 300px;
+    width: 80vw;
+    height: 150px;
+    display: grid;
+    grid-template-areas: 
+    "rover"
+    "sol"
+    "camera"
+    "submit";
+    place-items: center center;
+}
+.search__rover {
+    grid-area: rover;
+}
+.search__sol {
+    grid-area: sol;
+    width: 50px;
+}
+.search__camera {
+    grid-area: camera;
+}
+.search__submit {
+    grid-area: submit;
+    width: 80%;
+}
