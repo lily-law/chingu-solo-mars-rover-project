@@ -1,0 +1,9 @@
+.status {
+    text-align: center;
+} 
+.status__error {
+    color: red;
+}
+.status__ok {
+    color: green;
+}
