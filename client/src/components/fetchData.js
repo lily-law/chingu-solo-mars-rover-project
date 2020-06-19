@@ -13,7 +13,6 @@ export default async function fetchData(url, setStatus, successMsg) {
         }
         catch (e) {
             if (json) {  
-                console.log(text)
                 setStatus({
                     ...e
                 })

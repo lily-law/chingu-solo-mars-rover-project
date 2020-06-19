@@ -5,6 +5,7 @@ import fetchData from './components/fetchData';
 import './App.css';
 
 const cameras = {
+  "ENTRY": "Entry, Descent, and Landing Camera",
   "FHAZ": "Front Hazard Avoidance Camera",
   "NAVCAM": "Navigation Camera",
   "MAST": "Mast Camera",
@@ -15,20 +16,7 @@ const cameras = {
   "PANCAM": "Panoramic Camera",
   "MINITES": "Miniature Thermal Emission Spectrometer"
 }
-const rovers = [
-  {
-    name: 'Curiosity', 
-    cameras: ["FHAZ", "NAVCAM", "MAST", "CHEMCAM", "MAHLI", "MARDI", "RHAZ"]
-  },
-  { 
-    name: 'Opportunity',
-    cameras: ["FHAZ", "RHAZ", "NAVCAM", "PANCAM", "MINITES"]
-  },
-  {
-    name: 'Spirit',
-    cameras: ["FHAZ", "RHAZ", "NAVCAM", "PANCAM", "MINITES"]
-  }
-];
+const rovers = ['Curiosity', 'Opportunity', 'Spirit'];
 
 function App() {
   const [photoData, setPhotoData] = useState({photos: []});
@@ -48,9 +36,9 @@ function App() {
     (async () => {
       const manis = {};
       for (let rover of rovers) {
-        const manifest = await getManifest(rover.name);
+        const manifest = await getManifest(rover);
         if (manifest) {
-          manis[rover.name] = manifest;
+          manis[rover] = manifest;
         }
         else {
           return

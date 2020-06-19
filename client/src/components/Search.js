@@ -18,7 +18,7 @@ function Search({setPhotoData, status, setStatus, manifests, rovers, cameras, ro
             setStatus({requesting: true, message: `Fetching photo data for sol ${sol}`});
             const pagesTotal = Math.ceil(status.totalPhotos/25);
             setPagesTotal(pagesTotal);
-            let data = await fetchData(`/api/photos/${rover}?sol=${sol}&camera=${camera}`, setStatus, `Photo data recieved (1/${pagesTotal})`);
+            let data = await fetchData(`/api/photos/${rover}?sol=${sol}&camera=${camera}`, setStatus, `Photo data received (1/${pagesTotal})`);
             if (data && data.photos) { 
                 setPhotoData(data);
             }
@@ -43,7 +43,7 @@ function Search({setPhotoData, status, setStatus, manifests, rovers, cameras, ro
     return (
         <nav className="search">
             <select className="search__rover" value={rover} onChange={handleSetRover}>
-                {rovers.map(rover => <option key={rover.name} value={rover.name}>{rover.name}</option>)}
+                {rovers.map(rover => <option key={rover} value={rover}>{rover}</option>)}
             </select>
             <label className="search__sol">
                 Sol<br />

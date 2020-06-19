@@ -18,7 +18,7 @@ app.get('/api/photos/:rover', async function (req, res) {
         const isValid = validatePhotosRequest(reqData);
         if (isValid.errors) {
             console.log('Error: '+isValid.errors)
-            res.status(404).send({error: isValid.errors})
+            res.status(404).send({errors: isValid.errors})
         }
         else {
             const data = await getPhotoList(reqData);
@@ -42,7 +42,7 @@ app.get('/api/manifests/:rover', async function (req, res) {
         }
         const isValid = validateManifestRequest(reqData);
         if (!isValid) {
-            res.status(404).send({error: `No manifest available for rover ${reqData.rover}`});
+            res.status(404).send({errors: [`No manifest available for rover ${reqData.rover}`]});
         }
         else {
             const data = await getManifest(reqData);
@@ -60,7 +60,7 @@ app.get('/api/manifests/:rover', async function (req, res) {
 });
 
 app.get('/api/', function (req, res) {
-    res.status(404).send({error: `No resource available for ${req.path}`});
+    res.status(404).send({errors: [`No resource available for ${req.path}`]});
 });
 
 if (process.env.NODE_ENV === 'production') {  

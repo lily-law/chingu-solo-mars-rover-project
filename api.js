@@ -24,24 +24,26 @@ async function getPhotoList({rover, sol, camera, page}) {
     } 
 }
 
-const roversCameras = { 
-    'Curiosity': ["FHAZ", "NAVCAM", "MAST", "CHEMCAM", "MAHLI", "MARDI", "RHAZ"],
-    'Opportunity': ["FHAZ", "RHAZ", "NAVCAM", "PANCAM", "MINITES"],
-    'Spirit' : ["FHAZ", "RHAZ", "NAVCAM", "PANCAM", "MINITES"]
-};
-function validatePhotosRequest(reqData) {
+const rovers = ['Curiosity', 'Opportunity', 'Spirit'];
+function validatePhotosRequest({rover, camera, sol, page}) {
     const errors = [];
-    if (!Object.keys(roversCameras).find(rover => rover === reqData.rover)) {
-        errors.push('No such rover: '+reqData.rover);
+    if (sol === '' || isNaN(sol)) {
+        errors.push('Invalid Sol given: '+sol);
     }
-    else if (reqData.camera !== 'any' && !roversCameras[reqData.rover].find(cam => cam === reqData.camera)) {
-        errors.push(`${reqData.rover} rover does not have ${reqData.camera} camera`);
+    if (!rovers.includes(rover)) {
+        errors.push('No such rover: '+rover);
     }
-    if (reqData.sol === '' || isNaN(reqData.sol)) {
-        errors.push('Invalid Sol given: '+reqData.sol);
+    if (page === '' || isNaN(page)) {
+        errors.push('Wooops invalid page: '+sol+', no idea how that happened! Sorry');
     }
-    if (reqData.page === '' || isNaN(reqData.page)) {
-        errors.push('Wooops invalid page: '+reqData.sol+', no idea how that happened! Sorry');
+    if (errors.length === 0) {
+        const photoData = manifests[rover].photos.find(photo => photo.sol === sol);
+        if (!photoData) {
+            errors.push(`Unable to find data for ${rover} on ${sol}`);
+        }
+        else if (camera !== 'any' && photoData.cameras.find(cam => cam === camera)) {
+             errors.push(`${rover} rover does not have ${camera} camera`);
+        }
     }
     if (errors.length > 0) {
         return { errors }
@@ -77,7 +79,7 @@ async function getManifest({rover}) {
     } 
 }
 function validateManifestRequest({rover}) {
-    return Object.keys(roversCameras).find(r => r.toLowerCase() === rover.toLowerCase())
+    return rovers.includes(rover)
 }
 
 module.exports = {getPhotoList, validatePhotosRequest, getManifest, validateManifestRequest}
