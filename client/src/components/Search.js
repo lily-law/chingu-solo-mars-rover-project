@@ -11,6 +11,7 @@ const handleSetSol = (e, {manifests, rover, sol, setSol}) => {
 function Search({setPhotoData, status, setStatus, manifests, rovers, cameras, rover, setRover, setPagesTotal}) {
     const [sol, setSol] = useState(0);
     const [camera, setCamera] = useState('any');
+    const [availableCameras, setAvailableCameras] = useState([]);
 
     const handleSubmit = async () => {
         if (manifests[rover]) {
@@ -32,7 +33,9 @@ function Search({setPhotoData, status, setStatus, manifests, rovers, cameras, ro
         if (manifests[rover]) {
             const photoData = manifests[rover].photos.find(photo => photo.sol === sol);
             const totalPhotos = photoData && photoData['total_photos'];
-            totalPhotos && setStatus({done: `${rover} on Sol ${sol} has ${totalPhotos} photos ${camera !== 'any' ? 'from '+cameras[camera] : ''}`, totalPhotos});
+            const camsAvailable = photoData && photoData['cameras'];
+            totalPhotos && setStatus({done: `${rover} on Sol ${sol} has ${totalPhotos} photos`, totalPhotos});
+            camsAvailable && setAvailableCameras(camsAvailable);
             handleSetSol({target: {value: sol}}, {manifests, rover, sol, setSol});
         }
     }, [rover, sol, setStatus, camera, cameras, manifests]);
@@ -50,7 +53,7 @@ function Search({setPhotoData, status, setStatus, manifests, rovers, cameras, ro
                 Camera<br />
                 <select value={camera} onChange={e => setCamera(e.target.value)}>
                     <option value='any'>any</option>
-                    {rovers.find(r => r.name === rover).cameras.map(cam => <option key={cam} value={cam}>{cameras[cam]}</option>)}
+                    {availableCameras.map(cam => <option key={cam} value={cam}>{cameras[cam]}</option>)}
                 </select>
             </label>
             <button className="search__submit" onClick={handleSubmit}>Find Photos</button>
