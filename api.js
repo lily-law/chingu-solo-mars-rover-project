@@ -6,6 +6,7 @@ async function getPhotoList({rover, sol, camera, page}) {
     const response = await axios.get(`https://api.nasa.gov/mars-photos/api/v1/rovers/${rover}/photos?sol=${sol}${camera !== 'any' ? '&camera='+camera : ''}&page=${page}&api_key=${process.env.NASA_API_KEY}`);
     if (response.data) {
         if (response.data.errors) {
+            console.log(response.data.errors)
             throw response.data.errors
         }
         if (response.data.photos) {

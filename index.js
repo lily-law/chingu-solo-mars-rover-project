@@ -31,8 +31,7 @@ app.get('/api/photos/:rover', async function (req, res) {
         } 
     }
     catch (e) {
-        console.error(e);
-        res.status(500).send(e);
+        res.status(500).send({errors: ["Unable to fetch Photo List from NASA, please try again later"]});
     }
 });
 
@@ -43,7 +42,7 @@ app.get('/api/manifests/:rover', async function (req, res) {
         }
         const isValid = validateManifestRequest(reqData);
         if (!isValid) {
-            res.status(404).send({error: `No manifest avalible for rover ${reqData.rover}`});
+            res.status(404).send({error: `No manifest available for rover ${reqData.rover}`});
         }
         else {
             const data = await getManifest(reqData);
@@ -56,18 +55,17 @@ app.get('/api/manifests/:rover', async function (req, res) {
         } 
     }
     catch (e) {
-        console.error(e);
-        res.status(500).send(e);
+        res.status(500).send({errors: ["Unable to fetch manifests from NASA, please try again later"]});
     }
 });
 
 app.get('/api/', function (req, res) {
-    res.status(404).send({error: `No resource avalible for ${req.path}`});
+    res.status(404).send({error: `No resource available for ${req.path}`});
 });
 
 if (process.env.NODE_ENV === 'production') {  
     app.use(express.static(path.join(__dirname, 'client/build')));  
-    app.get('*', (req, res) => { res.sendfile(path.join(__dirname = 'client/build/index.html')); });
+    app.get('*', (req, res) => { res.sendFile(path.join(__dirname = 'client/build/index.html')); });
 }
 else {
     app.get('*', (req, res) => { res.sendFile(path.join(__dirname+'/client/public/index.html')); });
