@@ -7,3 +7,11 @@
 .status__ok {
     color: green;
 }
+.status div:nth-child(2) {
+    opacity: 0.8;
+    transform: scale(0.8);
+}
+.status div:nth-child(3) {
+    opacity: 0.5;
+    transform: scale(0.7);
+}

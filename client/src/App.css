@@ -3,11 +3,14 @@
 }
 
 .gallery {
+  width: 100%;
+  min-height: 100vh;
   display: flex;
   flex-flow: row wrap;
+  justify-content: flex-end;
 }
 
 .gallery>.photo {
-  width: 150px;
-  height: 100px;
+  width: 28%;
+  margin: 2%;
 }
