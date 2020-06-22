@@ -7,6 +7,14 @@ Web app to search and view photos taken by mars rovers. A [Chingu solo project](
 - Search by Sol (Martian rotation or day counting up from the rover's landing date)
 - Filter by rover cameras
 - Infinite scrolling
+- Status display
+- Modal view on photos
+- Sol input automatically converts to closest sol with data
+- Camera selection show only cameras with data for given sol
+- Live feedback on number of photos for give sol
+- Images are fetched on being viewed
+- Fully responsive design
+- Back to top button
 
 -----
 
@@ -21,10 +29,16 @@ Web app to search and view photos taken by mars rovers. A [Chingu solo project](
 NASA_API_KEY=YOUR_KEY_HERE
 ```
 
-To run locally 
+### Install 
 ```
+npm install -g nodemon
 npm install
-npm client-install
+npm run client-install
+
+```
+
+# Run
+```
 npm run dev
 ```
 
