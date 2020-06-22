@@ -31,7 +31,7 @@ app.get('/api/photos/:rover', async function (req, res) {
         } 
     }
     catch (e) {
-        res.status(500).send({errors: ["Unable to fetch Photo List from NASA, please try again later"]});
+        res.status(500).send({errors: ["Unable to fetch Photo List from NASA, please try again later", e.message]});
     }
 });
 
@@ -55,7 +55,7 @@ app.get('/api/manifests/:rover', async function (req, res) {
         } 
     }
     catch (e) {
-        res.status(500).send({errors: ["Unable to fetch manifests from NASA, please try again later"]});
+        res.status(500).send({errors: ["Unable to fetch manifests from NASA, please try again later", e.message]});
     }
 });
 
