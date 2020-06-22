@@ -1,6 +1,7 @@
 import React from 'react';
 import Photo from './Photo';
 import NextPage from './NextPage';
+import ToTop from './ToTop';
 
 function Gallery({photoData, setPhotoData, setStatus, pagesTotal}) {
     const addToPhotoData = (data) => {
@@ -10,6 +11,7 @@ function Gallery({photoData, setPhotoData, setStatus, pagesTotal}) {
    return (<>
        <main className="gallery">
            {photoData.photos.map(p => <Photo {...{...p}} key={''+p.rover.id+p.camera.id+p.id} />)}
+           <ToTop />
        </main>
        {photoData.next.url === 'end' ? <div>End</div> : <NextPage next={photoData.next} {...{addToPhotoData, setStatus, pagesTotal}} />}
    </>)
