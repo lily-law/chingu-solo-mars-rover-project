@@ -49,7 +49,7 @@ function App() {
   }, []);
   return (
     <div className="App">
-      <SideBar {...{setPhotoData, setStatus, status, photoData, manifests, rovers, cameras, rover, setRover, setPagesTotal}} />
+      <SideBar {...{setPhotoData, setStatus, status, photoData, manifests, rovers, cameras, rover, setRover, pagesTotal, setPagesTotal}} />
       {photoData.photos.length > 0 && <Gallery {...{photoData, setPhotoData, setStatus, pagesTotal}} />}
     </div>
   );
