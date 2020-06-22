@@ -36,10 +36,10 @@ export default function Status({status}) {
   }
   return (
     <div className="status">
-      {output.map(elem => elem)}
-      {status && status.requesting && <div className="status__requesting">
+      {status && status.requesting && <figure className="status__requesting">
         <Spinner />
-      </div>}
+      </figure>}
+      {output.map(elem => elem)}
     </div>
   );
 }
