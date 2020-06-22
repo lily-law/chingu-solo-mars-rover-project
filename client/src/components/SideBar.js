@@ -3,15 +3,17 @@ import Search from './Search';
 import Status from './Status';
 import './SideBar.css';
 
-function SideBar({photoData, setPhotoData, status, setStatus, manifests, rovers, cameras, rover, setRover, setPagesTotal}) {
+function SideBar({photoData, setPhotoData, status, setStatus, manifests, rovers, cameras, rover, setRover, pagesTotal, setPagesTotal}) {
     const [expanded, setExpanded] = useState(true);
     return (<div className={`sidebar ${expanded ? 'sidebar--active' : ''}`}>
-        <button onClick={() => setExpanded(!expanded)} className="sideBar__toggle">{expanded ? '<' : '>'}</button>
-        <h1>Mars Photo API</h1>
-        <Search {...{setPhotoData, status, setStatus, manifests, rovers, cameras, rover, setRover, setPagesTotal}} />
+        <button onClick={() => setExpanded(!expanded)} className="sideBar__toggle">
+            <div className={`toggle__triangle ${expanded ? 'toggle__triangle--close' : 'toggle__triangle--open'}`} />
+        </button>
+        <h1>Mars Photo<br /> API</h1>
         <Status {...{status, photoData}} />
+        <Search {...{setPhotoData, status, setStatus, manifests, rovers, cameras, rover, setRover, pagesTotal, setPagesTotal}} />
         <footer>
-            Lily Law - GitHub Repo
+            <a href="https://github.com/lily-law/chingu-solo-mars-rover-project">Lily Law - GitHub Repo</a>
         </footer>
     </div>)
 }
