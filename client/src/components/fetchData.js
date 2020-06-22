@@ -1,4 +1,4 @@
-export default async function fetchData(url, setStatus, successMsg) {
+export default async function fetchData(url, setStatus = () => null, successMsg = "") {
         try {
             const res = await fetch(url)
             var text = await res.text()
@@ -19,7 +19,7 @@ export default async function fetchData(url, setStatus, successMsg) {
             }
             else {
                 setStatus({
-                    errors: ["Unable to connect, please check you connection and try again"]
+                    errors: ["Unable to connect, please check your connection and try again"]
                 }) 
             }
         }
