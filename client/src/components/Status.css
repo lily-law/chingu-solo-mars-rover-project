@@ -1,11 +1,12 @@
 .status {
     text-align: center;
+    position: relative;
 } 
 .status__error {
-    color: red;
+    color: var(--red);
 }
 .status__ok {
-    color: green;
+    color: var(--blue);
 }
 .status div:nth-child(2) {
     opacity: 0.8;
@@ -14,4 +15,9 @@
 .status div:nth-child(3) {
     opacity: 0.5;
     transform: scale(0.7);
+}
+.status__requesting {
+    position: absolute;
+    margin-top: -80px;
+    margin-left: calc(50% - 37px);
 }

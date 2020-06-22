@@ -2,6 +2,7 @@ import React from 'react';
 import Photo from './Photo';
 import NextPage from './NextPage';
 import ToTop from './ToTop';
+import './Gallery.css';
 
 function Gallery({photoData, setPhotoData, setStatus, pagesTotal}) {
     const addToPhotoData = (data) => {

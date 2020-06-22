@@ -27,19 +27,19 @@
     0%,
     25% {
         stroke-width: 5px;
-        stroke: #000000;
+        stroke: var(--blue);
         stroke-dashoffset: 280;
         transform: rotate(0);
     }
     50% {
         stroke-width: 10px;
-        stroke: #ffffff;
+        stroke: var(--red);
         stroke-dashoffset: 75;
         transform: rotate(45deg);
     }
     100% {
         stroke-width: 5px;
-        stroke: #000000;
+        stroke: var(--blue);
         stroke-dashoffset: 280;
         transform: rotate(360deg);
     }
