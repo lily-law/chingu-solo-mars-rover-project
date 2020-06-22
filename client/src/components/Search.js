@@ -8,7 +8,7 @@ const handleSetSol = (e, {manifests, rover, sol, setSol}) => {
     Number.isInteger(nearest) && setSol(nearest);
 }
 
-function Search({setPhotoData, status, setStatus, manifests, rovers, cameras, rover, setRover, setPagesTotal}) {
+function Search({setPhotoData, setStatus, manifests, rovers, cameras, rover, setRover, pagesTotal, setPagesTotal}) {
     const [sol, setSol] = useState(0);
     const [camera, setCamera] = useState('any');
     const [availableCameras, setAvailableCameras] = useState([]);
@@ -16,10 +16,10 @@ function Search({setPhotoData, status, setStatus, manifests, rovers, cameras, ro
     const handleSubmit = async () => {
         if (manifests[rover]) {
             setStatus({requesting: true, message: `Fetching photo data for sol ${sol}`});
-            const pagesTotal = Math.ceil(status.totalPhotos/25);
-            setPagesTotal(pagesTotal);
-            let data = await fetchData(`/api/photos/${rover}?sol=${sol}&camera=${camera}`, setStatus, `Photo data received (1/${pagesTotal})`);
+            let data = await fetchData(`/api/photos/${rover}?sol=${sol}&camera=${camera}`);
             if (data && data.photos) { 
+                
+                data.next && data.next.index && setStatus({done: `Photo data received (${data.next.index}/${pagesTotal})`});
                 setPhotoData(data);
             }
         }
@@ -37,16 +37,21 @@ function Search({setPhotoData, status, setStatus, manifests, rovers, cameras, ro
             totalPhotos && setStatus({done: `${rover} on Sol ${sol} has ${totalPhotos} photos`, totalPhotos});
             camsAvailable && setAvailableCameras(camsAvailable);
             handleSetSol({target: {value: sol}}, {manifests, rover, sol, setSol});
+            const pagesTotal = Math.ceil(totalPhotos/25);
+            setPagesTotal(pagesTotal);
         }
-    }, [rover, sol, setStatus, camera, cameras, manifests]);
+    }, [rover, sol, setStatus, camera, cameras, manifests, setPagesTotal]);
 
     return (
         <nav className="search">
-            <select className="search__rover" value={rover} onChange={handleSetRover}>
-                {rovers.map(rover => <option key={rover} value={rover}>{rover}</option>)}
-            </select>
+            <label className="search__rover">
+                Rover <br />
+                <select value={rover} onChange={handleSetRover}>
+                    {rovers.map(rover => <option key={rover} value={rover}>{rover}</option>)}
+                </select>
+            </label>
             <label className="search__sol">
-                Sol<br />
+                <div>Sol</div>
                 <input type="number" value={sol} onChange={e => handleSetSol(e, {manifests, rover, sol, setSol})} />
             </label>
             <label className="search__camera">
