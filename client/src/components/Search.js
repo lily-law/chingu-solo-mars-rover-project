@@ -18,9 +18,12 @@ function Search({setPhotoData, setStatus, manifests, rovers, cameras, rover, set
             setStatus({requesting: true, message: `Fetching photo data for sol ${sol}`});
             let data = await fetchData(`/api/photos/${rover}?sol=${sol}&camera=${camera}`);
             if (data && data.photos) { 
-                
-                data.next && data.next.index && setStatus({done: `Photo data received (${data.next.index}/${pagesTotal})`});
+                data.next && data.next.index && setStatus({done: `Photo data received (${data.next.index-1}/${pagesTotal})`});
                 setPhotoData(data);
+                window.scrollTo({
+                    top: 100,
+                    behavior: 'smooth'
+                });
             }
         }
     }
@@ -61,7 +64,7 @@ function Search({setPhotoData, setStatus, manifests, rovers, cameras, rover, set
                     {availableCameras.map(cam => <option key={cam} value={cam}>{cameras[cam]}</option>)}
                 </select>
             </label>
-            <button className="search__submit" onClick={handleSubmit}>Find Photos</button>
+            <button className="search__submit" onClick={handleSubmit}>Search</button>
         </nav>
     );
 }
