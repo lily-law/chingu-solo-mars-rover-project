@@ -15,7 +15,7 @@ app.get('/api/photos/:rover', async function (req, res) {
             camera: req.query.camera,
             page: req.query.page || '1'
         }
-        const isValid = validatePhotosRequest(reqData);
+        const isValid = await validatePhotosRequest(reqData);
         if (isValid.errors) {
             console.log('Error: '+isValid.errors)
             res.status(404).send({errors: isValid.errors})
