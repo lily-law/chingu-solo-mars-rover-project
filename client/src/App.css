@@ -2,12 +2,3 @@
   
 }
 
-.gallery {
-  display: flex;
-  flex-flow: row wrap;
-}
-
-.gallery>.photo {
-  width: 150px;
-  height: 100px;
-}

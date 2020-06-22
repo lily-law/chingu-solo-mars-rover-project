@@ -1,21 +1,27 @@
-export default async function fetchData(url, setStatus) {
-    let res;
-    try {
-        res = await fetch(url);
-        let json = await res.json();
-        if (res.ok && json.data) { 
-            setStatus({code: res.status});
-            return json.data
-        } 
-        else {
-            throw json.error
+export default async function fetchData(url, setStatus = () => null, successMsg = "") {
+        try {
+            const res = await fetch(url)
+            var text = await res.text()
+            var json = JSON.parse(text)
+            if (res.ok) {
+                successMsg && setStatus({done: successMsg})
+                return json
+            }
+            else {
+                throw json
+            }   
         }
-    }
-    catch (e) {
-        console.error(e);
-        setStatus({
-            code: res.status,
-            message: e.message
-        });
-    }
+        catch (e) {
+            if (json) {  
+                setStatus({
+                    ...e
+                })
+            }
+            else {
+                setStatus({
+                    errors: ["Unable to connect, please check your connection and try again"]
+                }) 
+            }
+        }
+    return
 }

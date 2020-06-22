@@ -1,50 +1,62 @@
-const https = require('https');
+const axios = require('axios');
 const dotenv = require('dotenv');
 dotenv.config();
 
+const cache = {
+    manifests: {},
+    photoLists: {}
+};
+
+
 async function getPhotoList({rover, sol, camera, page}) {
-    return new Promise((resolve, reject) => {
-        https.get(`https://api.nasa.gov/mars-photos/api/v1/rovers/${rover}/photos?sol=${sol}${camera !== 'any' ? '&camera='+camera : ''}&page=${page}&api_key=${process.env.NASA_API_KEY}`, (res) => {
-            let data = '';
-            res.on('data', (chunk) => {
-                data += chunk;
-            });
-            res.on('end', async () => {
-                const json = await JSON.parse(data);
-                if (json.photos) {
-                    resolve({
-                        photos: json.photos,
-                        next: json.photos.length < 25 ? 'end' : `/api/${rover}?sol=${sol}&camera=${camera}&page=${parseInt(page)+1}`
-                    });
+    const url = `https://api.nasa.gov/mars-photos/api/v1/rovers/${rover}/photos?sol=${sol}${camera !== 'any' ? '&camera='+camera : ''}&page=${page}`;
+    if (cache.photoLists.hasOwnProperty(url)) {
+        return cache.photoLists[url]
+    }
+    const response = await axios.get(`${url}&api_key=${process.env.NASA_API_KEY}`);
+    if (response.data) {
+        if (response.data.errors) {
+            throw response.data.errors
+        }
+        if (response.data.photos) {
+            cache.photoLists[url] = {
+                photos: response.data.photos,
+                next: {
+                    url: response.data.photos.length < 25 ? 'end' : `/api/photos/${rover}?sol=${sol}&camera=${camera}&page=${parseInt(page)+1}`,
+                    index: parseInt(page)+1
                 } 
-                else {
-                    reject(json); 
-                }
-            });
-        }).on("error", (err) => {
-            reject(err)
-        });
-    });
+            };
+            return cache.photoLists[url]
+        }
+    }
+    else {
+        return response
+    } 
 }
 
-const roversCameras = { 
-    'Curiosity': ["FHAZ", "NAVCAM", "MAST", "CHEMCAM", "MAHLI", "MARDI", "RHAZ"],
-    'Opportunity': ["FHAZ", "RHAZ", "NAVCAM", "PANCAM", "MINITES"],
-    'Spirit' : ["FHAZ", "RHAZ", "NAVCAM", "PANCAM", "MINITES"]
-};
-function validateRoverRequest(reqData) {
+const rovers = ['Curiosity', 'Opportunity', 'Spirit'];
+async function validatePhotosRequest({rover, camera, sol, page}) {
+    if (!cache.manifests[rover]) {
+        await getManifest({rover})
+    }
     const errors = [];
-    if (!Object.keys(roversCameras).find(rover => rover === reqData.rover)) {
-        errors.push('No such rover: '+reqData.rover);
+    if (sol === '' || isNaN(sol)) {
+        errors.push('Invalid Sol given: '+sol);
     }
-    else if (reqData.camera !== 'any' && !roversCameras[reqData.rover].find(cam => cam === reqData.camera)) {
-        errors.push(`${reqData.rover} rover does not have ${reqData.camera} camera`);
+    if (!rovers.includes(rover)) {
+        errors.push('No such rover: '+rover);
     }
-    if (reqData.sol === '' || isNaN(reqData.sol)) {
-        errors.push('Invalid Sol given: '+reqData.sol);
+    if (page === '' || isNaN(page)) {
+        errors.push('Wooops invalid page: '+sol+', no idea how that happened! Sorry');
     }
-    if (reqData.page === '' || isNaN(reqData.page)) {
-        errors.push('Wooops invalid page: '+reqData.sol+', no idea how that happened! Sorry');
+    if (errors.length === 0) {
+        const photoData = cache.manifests[rover].data.photos.find(photo => photo.sol == sol);
+        if (!photoData) {
+            errors.push(`Unable to find data for ${rover} on ${sol}`);
+        }
+        else if (camera !== 'any' && photoData.cameras.find(cam => cam === camera)) {
+             errors.push(`${rover} rover does not have ${camera} camera`);
+        }
     }
     if (errors.length > 0) {
         return { errors }
@@ -52,4 +64,34 @@ function validateRoverRequest(reqData) {
     return {}
 }
 
-module.exports = {getPhotoList, validateRoverRequest}
+async function getManifest({rover}) {
+    if (cache.manifests.hasOwnProperty(rover) && Date.now() - cache.manifests[rover].timeFetched < 1000*60*60*24) {
+        console.log("in cache")
+        return {
+            manifest: cache.manifests[rover].data
+        }
+    }
+    const response = await axios.get(`https://api.nasa.gov/mars-photos/api/v1/manifests/${rover}/?api_key=${process.env.NASA_API_KEY}`);
+    if (response.data) {
+        if (response.data.errors) {
+            throw response.data.errors
+        }
+        if (response.data['photo_manifest']) {
+            cache.manifests[rover] = {
+                timeFetched: Date.now(),
+                data: response.data['photo_manifest']
+            };
+            return {
+                manifest: cache.manifests[rover].data
+            }
+        }
+    }
+    else {
+        return response
+    } 
+}
+function validateManifestRequest({rover}) {
+    return rovers.includes(rover)
+}
+
+module.exports = {getPhotoList, validatePhotosRequest, getManifest, validateManifestRequest}
