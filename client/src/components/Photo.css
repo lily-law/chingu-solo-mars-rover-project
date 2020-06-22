@@ -1,0 +1,34 @@
+.photo__wrapper {
+    width: 28%;
+    margin: 2%;
+    max-width: 100%;
+    display: grid;
+    place-items: center center;
+}
+
+.photo {
+    max-width: 100%;
+}
+  
+.photo--placeholder {
+    height: 25vw;
+    display: grid;
+    place-items: center center;
+}
+
+.modal {
+    position: fixed;
+    width: 100%;
+    height: 100vh;
+    margin: 0;
+    display: grid;
+    place-items: center center;
+    left: 0;
+    top: 0;
+    z-index: 200;
+    border: none;
+}
+
+.modal__photo {
+    max-height: 80vh;
+}
