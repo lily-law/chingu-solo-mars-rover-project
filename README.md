@@ -2,6 +2,8 @@
 
 Web app to search and view photos taken by mars rovers. A [Chingu solo project](https://github.com/chingu-voyages/soloproject-tier3-mars-photos).
 
+[Live Demo](https://chingu-solo-mars-rover-api.herokuapp.com/)
+
 ## Features
 - Search photos from rovers Curiosity/Opportunity/Spirit
 - Search by Sol (Martian rotation or day counting up from the rover's landing date)
