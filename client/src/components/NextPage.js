@@ -2,12 +2,12 @@ import React, {useEffect, useRef} from 'react';
 import fetchData from './fetchData';
 import Spinner from './Spinner';
 
-function NextPage({next, addToPhotoData, setStatus, pagesTotal}) {
+function NextPage({next, addToPhotoData, setStatus}) {
     const ref = useRef(null);
     useEffect(() => {
         const fetchNextPage = async () => {
             try {
-                let data = await fetchData(next.url, setStatus, `Photo data recieved (${next.index-1}/${pagesTotal})`);
+                let data = await fetchData(next.url, setStatus, `Photo data recieved (${next.index})`);
                 if (data && data.photos) { 
                     addToPhotoData(data);
                 }
@@ -31,7 +31,7 @@ function NextPage({next, addToPhotoData, setStatus, pagesTotal}) {
                 refCurrent && observer.unobserve(refCurrent);
             } 
         }
-    }, [ref, next, addToPhotoData, setStatus, pagesTotal]);
+    }, [ref, next, addToPhotoData, setStatus]);
     return <div className="next-page" key={next.index} ref={ref}><Spinner /></div>
 }
 
