@@ -23,7 +23,6 @@ function App() {
   const [status, setStatus] = useState();
   const [manifests, setManifests] = useState({});
   const [rover, setRover] = useState('Curiosity');
-  const [pagesTotal, setPagesTotal] = useState(0);
 
   useEffect(() => {
     const getManifest = async (rover) => {
@@ -49,8 +48,8 @@ function App() {
   }, []);
   return (
     <div className="App">
-      <SideBar {...{setPhotoData, setStatus, status, photoData, manifests, rovers, cameras, rover, setRover, pagesTotal, setPagesTotal}} />
-      {photoData.photos.length > 0 && <Gallery {...{photoData, setPhotoData, setStatus, pagesTotal}} />}
+      <SideBar {...{setPhotoData, setStatus, status, photoData, manifests, rovers, cameras, rover, setRover}} />
+      {photoData.photos.length > 0 && <Gallery {...{photoData, setPhotoData, setStatus}} />}
     </div>
   );
 }

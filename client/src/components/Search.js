@@ -8,7 +8,7 @@ const handleSetSol = (e, {manifests, rover, sol, setSol}) => {
     Number.isInteger(nearest) && setSol(nearest);
 }
 
-function Search({setPhotoData, setStatus, manifests, rovers, cameras, rover, setRover, pagesTotal, setPagesTotal}) {
+function Search({setPhotoData, setStatus, manifests, rovers, cameras, rover, setRover}) {
     const [sol, setSol] = useState(0);
     const [camera, setCamera] = useState('any');
     const [availableCameras, setAvailableCameras] = useState([]);
@@ -18,7 +18,7 @@ function Search({setPhotoData, setStatus, manifests, rovers, cameras, rover, set
             setStatus({requesting: true, message: `Fetching photo data for sol ${sol}`});
             let data = await fetchData(`/api/photos/${rover}?sol=${sol}&camera=${camera}`);
             if (data && data.photos) { 
-                data.next && data.next.index && setStatus({done: `Photo data received (${data.next.index-1}/${pagesTotal})`});
+                data.next && data.next.index && setStatus({done: `Photo data received (${data.next.index-1})`});
                 setPhotoData(data);
                 window.scrollTo({
                     top: 100,
@@ -40,10 +40,8 @@ function Search({setPhotoData, setStatus, manifests, rovers, cameras, rover, set
             totalPhotos && setStatus({done: `${rover} on Sol ${sol} has ${totalPhotos} photos`, totalPhotos});
             camsAvailable && setAvailableCameras(camsAvailable);
             handleSetSol({target: {value: sol}}, {manifests, rover, sol, setSol});
-            const pagesTotal = Math.ceil(totalPhotos/25);
-            setPagesTotal(pagesTotal);
         }
-    }, [rover, sol, setStatus, camera, cameras, manifests, setPagesTotal]);
+    }, [rover, sol, setStatus, camera, cameras, manifests]);
 
     return (
         <nav className="search">
