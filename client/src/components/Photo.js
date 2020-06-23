@@ -12,7 +12,7 @@ function Photo({img_src, sol, earth_date, camera, rover, id}) {
             let refCurrent = ref.current;
             let observer = new IntersectionObserver(entries => {
                 if (entries[0].isIntersecting) {
-                    refCurrent && setSrc(img_src);
+                    refCurrent && setSrc('https'+img_src.substr(4));
                     observer.unobserve(refCurrent);
                     ref.current = null;
                 }
