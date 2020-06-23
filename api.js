@@ -54,8 +54,8 @@ async function validatePhotosRequest({rover, camera, sol, page}) {
         if (!photoData) {
             errors.push(`Unable to find data for ${rover} on ${sol}`);
         }
-        else if (camera !== 'any' && photoData.cameras.find(cam => cam === camera)) {
-             errors.push(`${rover} rover does not have ${camera} camera`);
+        else if (camera !== 'any' && !photoData.cameras.find(cam => cam === camera)) {
+            errors.push(`${rover} rover on ${sol} does not have data for ${camera} camera`);
         }
     }
     if (errors.length > 0) {
@@ -66,7 +66,6 @@ async function validatePhotosRequest({rover, camera, sol, page}) {
 
 async function getManifest({rover}) {
     if (cache.manifests.hasOwnProperty(rover) && Date.now() - cache.manifests[rover].timeFetched < 1000*60*60*24) {
-        console.log("in cache")
         return {
             manifest: cache.manifests[rover].data
         }
